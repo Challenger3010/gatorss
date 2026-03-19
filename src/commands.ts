@@ -1,17 +1,9 @@
-import { setUser } from "./config";
-
-export type CommandHandler = (cmdName: string, ...args: string[]) => void;
+export type CommandHandler = (
+  cmdName: string,
+  ...args: string[]
+) => Promise<void>;
 
 export type CommandsRegistry = Record<string, CommandHandler>;
-
-export function loginHandler(cmdName: string, ...args: string[]) {
-  if (args.length == 0) {
-    throw new Error("Expected at least one argument (username)");
-  }
-
-  setUser(args[0]);
-  console.log(`The user ${args[0]} has been set`);
-}
 
 export function registerCommand(
   registry: CommandsRegistry,
@@ -21,7 +13,7 @@ export function registerCommand(
   registry[cmdName] = handler;
 }
 
-export function runCommand(
+export async function runCommand(
   registry: CommandsRegistry,
   cmdName: string,
   ...args: string[]
@@ -31,5 +23,5 @@ export function runCommand(
     throw new Error(`Unknown command: ${cmdName}`);
   }
 
-  handler(cmdName, ...args);
+  await handler(cmdName, ...args);
 }

@@ -8,6 +8,13 @@
       "when": 1773922673245,
       "tag": "0000_previous_blue_marvel",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1773926155297,
+      "tag": "0001_whole_major_mapleleaf",
+      "breakpoints": true
     }
   ]
 }

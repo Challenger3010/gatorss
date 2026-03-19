@@ -1,13 +1,8 @@
-import { exit } from "node:process";
-import {
-  CommandsRegistry,
-  loginHandler,
-  registerCommand,
-  runCommand,
-} from "./commands";
-import { readConfig, setUser } from "./config";
+import { CommandsRegistry, registerCommand, runCommand } from "./commands";
 
-function main() {
+import { loginHandler, registerHandler } from "./handlers";
+
+async function main() {
   const registry: CommandsRegistry = {};
 
   let allArgs = process.argv;
@@ -23,8 +18,15 @@ function main() {
   let cmdName = args[0];
   let cmdArgs = args.slice(1);
 
-  registerCommand(registry, cmdName, loginHandler);
-  runCommand(registry, cmdName, ...cmdArgs);
+  if (cmdName == "register") {
+    registerCommand(registry, cmdName, registerHandler);
+  } else {
+    registerCommand(registry, cmdName, loginHandler);
+  }
+
+  await runCommand(registry, cmdName, ...cmdArgs);
+
+  process.exit(0);
 }
 
 main();
