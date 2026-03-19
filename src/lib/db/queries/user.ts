@@ -19,3 +19,13 @@ export async function getUser(name: string) {
   }
   return result.name;
 }
+
+export async function getUsers() {
+  const result = await db.select().from(users);
+
+  return result;
+}
+
+export async function resetUserTable() {
+  const [result] = await db.delete(users);
+}
