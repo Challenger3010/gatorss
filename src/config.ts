@@ -23,7 +23,7 @@ export function readConfig() {
 }
 
 function getConfigFilePath() {
-  const configFileName = ".gatorssconfig.json";
+  const configFileName = ".gatorconfig.json";
   const homeDir = os.homedir();
   return path.join(homeDir, configFileName);
 }
