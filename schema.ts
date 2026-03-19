@@ -1,0 +1,11 @@
+import { PgTable, timestamp, uuid, text, pgTable } from "drizzle-orm/pg-core";
+
+export const user = pgTable("user", {
+  id: uuid("id").primaryKey().defaultRandom().notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at")
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+  name: text("name").notNull().unique(),
+});
