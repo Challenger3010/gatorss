@@ -1,6 +1,7 @@
 import { CommandsRegistry, registerCommand, runCommand } from "./commands";
 
 import {
+  addFeedHandler,
   aggHandler,
   allUsersHandler,
   loginHandler,
@@ -26,6 +27,7 @@ async function main() {
   registerCommand(registry, "reset", resetHandler);
   registerCommand(registry, "login", loginHandler);
   registerCommand(registry, "agg", aggHandler);
+  registerCommand(registry, "addfeed", addFeedHandler);
 
   await runCommand(registry, cmdName, ...cmdArgs);
 

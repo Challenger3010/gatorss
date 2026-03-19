@@ -4,8 +4,10 @@ import {
   getUser,
   getUsers,
   resetUserTable,
+  User,
 } from "./lib/db/queries/user";
 import { fetchFeed } from "./feed";
+import { createFeed, Feed } from "./lib/db/queries/feed";
 
 export async function loginHandler(cmdName: string, ...args: string[]) {
   if (args.length == 0) {
@@ -16,7 +18,7 @@ export async function loginHandler(cmdName: string, ...args: string[]) {
 
   const dbUserName = await getUser(userName);
 
-  setUser(dbUserName);
+  setUser(dbUserName.name);
   console.log(`The user ${dbUserName} has been set`);
 }
 
@@ -60,4 +62,20 @@ export async function aggHandler(cmdName: string, ...args: string[]) {
   feed.rss.channel.item.forEach((item) => {
     console.log(item.title);
   });
+}
+
+export async function addFeedHandler(cmdName: string, ...args: string[]) {
+  let configUser = readConfig().currentUserName;
+  let curUser: User = await getUser(configUser);
+
+  let name = args[0];
+  let url = args[1];
+
+  let res: Feed = await createFeed(name, url, curUser.id);
+  console.log(res, curUser);
+}
+
+export async function printFeed(feed: Feed, user: User) {
+  console.log("Feed: ", feed);
+  console.log("User: ", user);
 }
