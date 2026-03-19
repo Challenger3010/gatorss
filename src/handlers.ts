@@ -5,6 +5,7 @@ import {
   getUsers,
   resetUserTable,
 } from "./lib/db/queries/user";
+import { fetchFeed } from "./feed";
 
 export async function loginHandler(cmdName: string, ...args: string[]) {
   if (args.length == 0) {
@@ -45,5 +46,18 @@ export async function allUsersHandler(cmdName: string, ...args: string[]) {
     console.log(
       `${curUser == user.name ? `${user.name} (current)` : user.name}`,
     );
+  });
+}
+
+export async function aggHandler(cmdName: string, ...args: string[]) {
+  let feed = await fetchFeed("https://www.wagslane.dev/index.xml");
+
+  console.log(`Channel: ${feed.rss.channel.title}`);
+  console.log(`Description: ${feed.rss.channel.description}`);
+  console.log(`Link: ${feed.rss.channel.link}`);
+  console.log("Items:");
+  console.log("Optimize for simplicity");
+  feed.rss.channel.item.forEach((item) => {
+    console.log(item.title);
   });
 }
