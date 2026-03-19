@@ -21,6 +21,13 @@ export async function getUser(name: string) {
   }
   return result;
 }
+export async function getUserById(id: string) {
+  const [result] = await db.select().from(users).where(eq(users.id, id));
+  if (!result) {
+    throw new Error("This account does not exist");
+  }
+  return result;
+}
 
 export async function getUsers() {
   const result = await db.select().from(users);

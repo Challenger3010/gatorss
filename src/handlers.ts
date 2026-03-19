@@ -2,12 +2,13 @@ import { readConfig, setUser } from "./config";
 import {
   createUser,
   getUser,
+  getUserById,
   getUsers,
   resetUserTable,
   User,
 } from "./lib/db/queries/user";
 import { fetchFeed } from "./feed";
-import { createFeed, Feed } from "./lib/db/queries/feed";
+import { createFeed, Feed, getAllFeeds } from "./lib/db/queries/feed";
 
 export async function loginHandler(cmdName: string, ...args: string[]) {
   if (args.length == 0) {
@@ -73,6 +74,20 @@ export async function addFeedHandler(cmdName: string, ...args: string[]) {
 
   let res: Feed = await createFeed(name, url, curUser.id);
   console.log(res, curUser);
+}
+
+export async function allFeedsHandler(cmdName: string, ...args: string[]) {
+  const allFeeds = await getAllFeeds();
+
+  console.log("Feeds:");
+  console.log("-------------------");
+  for (const feed of allFeeds) {
+    const user = await getUserById(feed.userId);
+    console.log("Feed name: ", feed.name);
+    console.log("URL: ", feed.url);
+    console.log("User: ", user.name);
+  }
+  console.log("-------------------");
 }
 
 export async function printFeed(feed: Feed, user: User) {
