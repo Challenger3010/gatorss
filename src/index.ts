@@ -1,4 +1,9 @@
-import { CommandsRegistry, registerCommand, runCommand } from "./commands";
+import {
+  CommandsRegistry,
+  middlewareLogIn,
+  registerCommand,
+  runCommand,
+} from "./commands";
 
 import {
   addFeedHandler,
@@ -30,10 +35,10 @@ async function main() {
   registerCommand(registry, "reset", resetHandler);
   registerCommand(registry, "login", loginHandler);
   registerCommand(registry, "agg", aggHandler);
-  registerCommand(registry, "addfeed", addFeedHandler);
+  registerCommand(registry, "addfeed", middlewareLogIn(addFeedHandler));
   registerCommand(registry, "feeds", allFeedsHandler);
-  registerCommand(registry, "follow", followHandler);
-  registerCommand(registry, "following", followingHandler);
+  registerCommand(registry, "follow", middlewareLogIn(followHandler));
+  registerCommand(registry, "following", middlewareLogIn(followingHandler));
 
   await runCommand(registry, cmdName, ...cmdArgs);
 

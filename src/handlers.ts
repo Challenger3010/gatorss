@@ -89,18 +89,20 @@ export async function aggHandler(cmdName: string, ...args: string[]) {
   });
 }
 
-export async function addFeedHandler(cmdName: string, ...args: string[]) {
-  let curUser: User = await getCurrentUser();
-
+export async function addFeedHandler(
+  cmdName: string,
+  user: User,
+  ...args: string[]
+) {
   let name = args[0];
   let url = args[1];
 
-  let res: Feed = await createFeed(name, url, curUser.id);
+  let res: Feed = await createFeed(name, url, user.id);
   console.log("Feed added:");
   console.log("-------------------");
   console.log(res.name);
   console.log("-------------------\n\n");
-  await followHandler(cmdName, url);
+  await followHandler(cmdName, user, url);
 }
 
 export async function allFeedsHandler(cmdName: string, ...args: string[]) {
@@ -122,24 +124,29 @@ export async function printFeed(feed: Feed, user: User) {
   console.log("User: ", user);
 }
 
-export async function followHandler(cmdName: string, ...args: string[]) {
-  const curUser = await getCurrentUser();
-
+export async function followHandler(
+  cmdName: string,
+  user: User,
+  ...args: string[]
+) {
   const url = args[0];
 
   const feed: Feed = await getFeedByUrl(url);
 
-  const follow = await createFeedFollow(curUser.id, feed.id);
+  const follow = await createFeedFollow(user.id, feed.id);
 
   console.log("Now follwing:");
   console.log("-------------------");
   console.log(`Feed Name: ${follow[0].feeds.name}`);
-  console.log(`Current User Name: ${curUser.name}`);
+  console.log(`Current User Name: ${user.name}`);
 }
 
-export async function followingHandler(cmdName: string, ...args: string[]) {
-  const curUser = await getCurrentUser();
-  let feeds = await getFollowedFeeds(curUser.id);
+export async function followingHandler(
+  cmdName: string,
+  user: User,
+  ...args: string[]
+) {
+  let feeds = await getFollowedFeeds(user.id);
 
   if (!feeds || feeds.length == 0) {
     console.log("You are not following anything!");
@@ -148,7 +155,7 @@ export async function followingHandler(cmdName: string, ...args: string[]) {
     return;
   }
 
-  console.log(`${curUser.name} is following:`);
+  console.log(`${user.name} is following:`);
   console.log("-------------------");
   for (const feed of feeds) {
     console.log(feed.feeds.name);
@@ -156,8 +163,12 @@ export async function followingHandler(cmdName: string, ...args: string[]) {
   console.log("-------------------");
 }
 
-async function getCurrentUser() {
+export async function getCurrentUser() {
   let configUser = readConfig().currentUserName;
   let curUser: User = await getUser(configUser);
+
+  if (!curUser) {
+    throw new Error(`User ${curUser} not found`);
+  }
   return curUser;
 }

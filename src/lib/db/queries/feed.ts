@@ -64,3 +64,7 @@ export async function getFollowedFeeds(userId: string) {
 
   return result;
 }
+
+export async function resetFeedTable() {
+  const [result] = await db.delete(feeds);
+}
