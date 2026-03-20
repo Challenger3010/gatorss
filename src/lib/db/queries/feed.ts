@@ -1,5 +1,5 @@
 import { db } from "..";
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 import { feeds, feed_follows, users } from "../schema";
 import { abort } from "node:process";
 

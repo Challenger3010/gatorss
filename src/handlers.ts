@@ -25,10 +25,15 @@ export async function loginHandler(cmdName: string, ...args: string[]) {
 
   const userName = args[0];
 
-  const dbUserName = await getUser(userName);
+  const dbUser = await getUser(userName);
 
-  setUser(dbUserName.name);
-  console.log(`The user ${dbUserName} has been set`);
+  if (!dbUser) {
+    console.log("User does not exist");
+    return;
+  }
+
+  setUser(dbUser.name);
+  console.log(`The user ${dbUser.name} has been set`);
 }
 
 export async function registerHandler(cmdName: string, ...args: string[]) {
@@ -39,7 +44,11 @@ export async function registerHandler(cmdName: string, ...args: string[]) {
   const userName = args[0];
 
   const registeredUser = await createUser(userName);
-  console.log(registeredUser);
+
+  if (!registeredUser) {
+    console.log("User already exists!");
+    return;
+  }
 
   setUser(registeredUser.name);
   console.log(`The user ${registeredUser.name} was created`);
@@ -50,6 +59,13 @@ export async function resetHandler(cmdName: string, ...args: string[]) {
 }
 
 export async function allUsersHandler(cmdName: string, ...args: string[]) {
+  if (args.length > 0) {
+    console.log("Unknown options");
+    console.log(...args);
+    console.log("Command doesn't have args");
+    return;
+  }
+
   let users = await getUsers();
   let curUser = readConfig().currentUserName;
 
@@ -124,6 +140,13 @@ export async function followHandler(cmdName: string, ...args: string[]) {
 export async function followingHandler(cmdName: string, ...args: string[]) {
   const curUser = await getCurrentUser();
   let feeds = await getFollowedFeeds(curUser.id);
+
+  if (!feeds || feeds.length == 0) {
+    console.log("You are not following anything!");
+    console.log("See all feeds with the 'feeds' command");
+    console.log("The follow it with 'follow <feed_url>'");
+    return;
+  }
 
   console.log(`${curUser.name} is following:`);
   console.log("-------------------");
