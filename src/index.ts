@@ -15,6 +15,7 @@ import {
   loginHandler,
   registerHandler,
   resetHandler,
+  unfollowgHandler,
 } from "./handlers";
 
 async function main() {
@@ -39,6 +40,7 @@ async function main() {
   registerCommand(registry, "feeds", allFeedsHandler);
   registerCommand(registry, "follow", middlewareLogIn(followHandler));
   registerCommand(registry, "following", middlewareLogIn(followingHandler));
+  registerCommand(registry, "unfollow", middlewareLogIn(unfollowgHandler));
 
   await runCommand(registry, cmdName, ...cmdArgs);
 

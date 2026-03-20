@@ -11,6 +11,7 @@ import { fetchFeed } from "./feed";
 import {
   createFeed,
   createFeedFollow,
+  deleteFollowedFeed,
   Feed,
   getAllFeeds,
   getFeedByUrl,
@@ -161,6 +162,15 @@ export async function followingHandler(
     console.log(feed.feeds.name);
   }
   console.log("-------------------");
+}
+
+export async function unfollowgHandler(
+  cmdName: string,
+  user: User,
+  ...args: string[]
+) {
+  let test = await deleteFollowedFeed(user.id, args[0]);
+  console.log("Feed deleted");
 }
 
 export async function getCurrentUser() {

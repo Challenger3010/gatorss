@@ -65,6 +65,18 @@ export async function getFollowedFeeds(userId: string) {
   return result;
 }
 
+export async function deleteFollowedFeed(userId: string, url: string) {
+  const feeds = await getFollowedFeeds(userId);
+
+  for (const feed of feeds) {
+    if (feed.feeds.url == url) {
+      const result = await db
+        .delete(feed_follows)
+        .where(eq(feed_follows.feedId, feed.feeds.id));
+    }
+  }
+}
+
 export async function resetFeedTable() {
   const [result] = await db.delete(feeds);
 }
