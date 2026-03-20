@@ -15,6 +15,13 @@
       "when": 1773935468752,
       "tag": "0001_real_quentin_quire",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1773996134493,
+      "tag": "0002_empty_shadowcat",
+      "breakpoints": true
     }
   ]
 }

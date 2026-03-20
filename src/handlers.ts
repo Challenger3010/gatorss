@@ -8,7 +8,15 @@ import {
   User,
 } from "./lib/db/queries/user";
 import { fetchFeed } from "./feed";
-import { createFeed, Feed, getAllFeeds } from "./lib/db/queries/feed";
+import {
+  createFeed,
+  createFeedFollow,
+  Feed,
+  getAllFeeds,
+  getFeedByUrl,
+  getFeedByUserId,
+  getFollowedFeeds,
+} from "./lib/db/queries/feed";
 
 export async function loginHandler(cmdName: string, ...args: string[]) {
   if (args.length == 0) {
@@ -66,14 +74,17 @@ export async function aggHandler(cmdName: string, ...args: string[]) {
 }
 
 export async function addFeedHandler(cmdName: string, ...args: string[]) {
-  let configUser = readConfig().currentUserName;
-  let curUser: User = await getUser(configUser);
+  let curUser: User = await getCurrentUser();
 
   let name = args[0];
   let url = args[1];
 
   let res: Feed = await createFeed(name, url, curUser.id);
-  console.log(res, curUser);
+  console.log("Feed added:");
+  console.log("-------------------");
+  console.log(res.name);
+  console.log("-------------------\n\n");
+  await followHandler(cmdName, url);
 }
 
 export async function allFeedsHandler(cmdName: string, ...args: string[]) {
@@ -93,4 +104,37 @@ export async function allFeedsHandler(cmdName: string, ...args: string[]) {
 export async function printFeed(feed: Feed, user: User) {
   console.log("Feed: ", feed);
   console.log("User: ", user);
+}
+
+export async function followHandler(cmdName: string, ...args: string[]) {
+  const curUser = await getCurrentUser();
+
+  const url = args[0];
+
+  const feed: Feed = await getFeedByUrl(url);
+
+  const follow = await createFeedFollow(curUser.id, feed.id);
+
+  console.log("Now follwing:");
+  console.log("-------------------");
+  console.log(`Feed Name: ${follow[0].feeds.name}`);
+  console.log(`Current User Name: ${curUser.name}`);
+}
+
+export async function followingHandler(cmdName: string, ...args: string[]) {
+  const curUser = await getCurrentUser();
+  let feeds = await getFollowedFeeds(curUser.id);
+
+  console.log(`${curUser.name} is following:`);
+  console.log("-------------------");
+  for (const feed of feeds) {
+    console.log(feed.feeds.name);
+  }
+  console.log("-------------------");
+}
+
+async function getCurrentUser() {
+  let configUser = readConfig().currentUserName;
+  let curUser: User = await getUser(configUser);
+  return curUser;
 }

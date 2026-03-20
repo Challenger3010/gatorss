@@ -5,6 +5,8 @@ import {
   aggHandler,
   allFeedsHandler,
   allUsersHandler,
+  followHandler,
+  followingHandler,
   loginHandler,
   registerHandler,
   resetHandler,
@@ -30,6 +32,8 @@ async function main() {
   registerCommand(registry, "agg", aggHandler);
   registerCommand(registry, "addfeed", addFeedHandler);
   registerCommand(registry, "feeds", allFeedsHandler);
+  registerCommand(registry, "follow", followHandler);
+  registerCommand(registry, "following", followingHandler);
 
   await runCommand(registry, cmdName, ...cmdArgs);
 
