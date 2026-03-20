@@ -22,6 +22,20 @@
       "when": 1773996134493,
       "tag": "0002_empty_shadowcat",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1774007010895,
+      "tag": "0003_nice_sprite",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1774011606714,
+      "tag": "0004_fresh_bishop",
+      "breakpoints": true
     }
   ]
 }

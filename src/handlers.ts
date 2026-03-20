@@ -17,7 +17,9 @@ import {
   getFeedByUrl,
   getFeedByUserId,
   getFollowedFeeds,
+  scrapeFeeds,
 } from "./lib/db/queries/feed";
+import { getPostForUser } from "./lib/db/queries/post";
 
 export async function loginHandler(cmdName: string, ...args: string[]) {
   if (args.length == 0) {
@@ -78,16 +80,53 @@ export async function allUsersHandler(cmdName: string, ...args: string[]) {
 }
 
 export async function aggHandler(cmdName: string, ...args: string[]) {
-  let feed = await fetchFeed("https://www.wagslane.dev/index.xml");
+  if (args.length < 1) {
+    throw new Error("usage: agg <time_between_reqs>");
+  }
 
-  console.log(`Channel: ${feed.rss.channel.title}`);
-  console.log(`Description: ${feed.rss.channel.description}`);
-  console.log(`Link: ${feed.rss.channel.link}`);
-  console.log("Items:");
-  console.log("Optimize for simplicity");
-  feed.rss.channel.item.forEach((item) => {
-    console.log(item.title);
+  const timeBetweenRequests = parseDuration(args[0]);
+  console.log(`Collecting feeds every ${args[0]}`);
+
+  scrapeFeeds().catch(console.error);
+
+  const interval = setInterval(() => {
+    scrapeFeeds().catch(console.error);
+  }, timeBetweenRequests);
+
+  await new Promise<void>((resolve) => {
+    process.on("SIGINT", () => {
+      console.log("Shutting down feed aggregator...");
+      clearInterval(interval);
+      resolve();
+    });
   });
+}
+
+function parseDuration(durationStr: string): number {
+  const regex = /^(\d+)(ms|s|m|h)$/;
+  const match = durationStr.match(regex);
+
+  if (!match) {
+    throw new Error(
+      `Invalid duration: ${durationStr}. Use format like 1s, 1m, 1h`,
+    );
+  }
+
+  const value = parseInt(match[1]);
+  const unit = match[2];
+
+  switch (unit) {
+    case "ms":
+      return value;
+    case "s":
+      return value * 1000;
+    case "m":
+      return value * 1000 * 60;
+    case "h":
+      return value * 1000 * 60 * 60;
+    default:
+      throw new Error(`Unknown unit: ${unit}`);
+  }
 }
 
 export async function addFeedHandler(
@@ -181,4 +220,20 @@ export async function getCurrentUser() {
     throw new Error(`User ${curUser} not found`);
   }
   return curUser;
+}
+
+export async function browseHandler(
+  cmdName: string,
+  user: User,
+  ...args: string[]
+) {
+  const feeds = await getFollowedFeeds(user.id);
+  let limit = args[0];
+
+  for (const feed of feeds) {
+    const post = await getPostForUser(+limit, feed.feeds.id);
+    post.forEach((it) => {
+      console.log(feed.feeds.name, ":", it.title, feed.feeds.url);
+    });
+  }
 }

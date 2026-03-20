@@ -10,6 +10,7 @@ import {
   aggHandler,
   allFeedsHandler,
   allUsersHandler,
+  browseHandler,
   followHandler,
   followingHandler,
   loginHandler,
@@ -41,6 +42,7 @@ async function main() {
   registerCommand(registry, "follow", middlewareLogIn(followHandler));
   registerCommand(registry, "following", middlewareLogIn(followingHandler));
   registerCommand(registry, "unfollow", middlewareLogIn(unfollowgHandler));
+  registerCommand(registry, "browse", middlewareLogIn(browseHandler));
 
   await runCommand(registry, cmdName, ...cmdArgs);
 
